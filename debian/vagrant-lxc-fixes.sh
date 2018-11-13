@@ -49,6 +49,11 @@ fi
 # See https://github.com/chef/bento/issues/609 for more info.
 echo 'APT::Periodic::Enable "0";' > ${ROOTFS}/etc/apt/apt.conf.d/10disable-periodic
 
+# Disable system-resolved, since it breaks resolving DNS names of other
+# lxc containers, see https://github.com/systemd/systemd/issues/10298
+rm -f ${ROOTFS}/etc/resolv.conf
+ln -s ../run/systemd/resolve/resolv.conf ${ROOTFS}/etc/resolv.conf
+
 utils.lxc.attach /usr/sbin/locale-gen ${LANG}
 utils.lxc.attach update-locale LANG=${LANG}
 
